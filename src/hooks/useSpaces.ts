@@ -3,9 +3,11 @@
 import { useState, useEffect, useCallback } from "react";
 
 export type SavedItem = {
+  id: string;
   url: string;
   title: string;
   text: string;
+  color?: string;
   timestamp: number;
 };
 
@@ -45,6 +47,7 @@ export function useSpaces() {
         try {
             const storedSpaces = localStorage.getItem("spaces");
             const storedActive = localStorage.getItem("activeSpaceId");
+            // eslint-disable-next-line
             if (storedSpaces) setSpaces(JSON.parse(storedSpaces));
             if (storedActive) setActiveSpaceId(storedActive);
         } catch (e) { console.error("Local storage error", e); }
@@ -70,12 +73,17 @@ export function useSpaces() {
     }
   }, [spaces]);
 
-  const selectSpace = useCallback(async (id: string) => {
+  const selectSpace = useCallback(async (id: string | null) => {
     setActiveSpaceId(id);
     if (typeof chrome !== "undefined" && chrome.storage) {
-      await chrome.storage.local.set({ activeSpaceId: id });
+      if (id === null) {
+        await chrome.storage.local.remove("activeSpaceId");
+      } else {
+        await chrome.storage.local.set({ activeSpaceId: id });
+      }
     } else {
-        localStorage.setItem("activeSpaceId", id);
+        if (id === null) localStorage.removeItem("activeSpaceId");
+        else localStorage.setItem("activeSpaceId", id);
     }
   }, []);
 

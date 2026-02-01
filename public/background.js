@@ -1,4 +1,4 @@
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((request) => {
   if (request.action === "openSpace") {
     const { urls, spaceName } = request;
     if (urls && Array.isArray(urls) && urls.length > 0) {
