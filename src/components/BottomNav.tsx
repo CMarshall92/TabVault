@@ -9,7 +9,7 @@ type BottomNavProps = {
 
 export default function BottomNav({ activeTab, onChange }: BottomNavProps) {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 border-t border-gray-200 bg-white p-2 flex justify-around items-center h-16 safe-area-bottom z-50">
+    <nav className="fixed bottom-0 left-0 right-0 border-t border-gray-200 bg-white dark:bg-zinc-900 dark:border-zinc-800 p-2 flex justify-around items-center h-16 safe-area-bottom z-50 transition-colors">
       <button
         type="button"
         onClick={(e) => {
@@ -17,10 +17,10 @@ export default function BottomNav({ activeTab, onChange }: BottomNavProps) {
           console.log("Spaces clicked");
           onChange("spaces");
         }}
-        className={`flex flex-col items-center justify-center w-full h-full space-y-1 cursor-pointer ${
+        className={`flex flex-col items-center justify-center w-full h-full space-y-1 cursor-pointer transition-colors ${
           activeTab === "spaces"
-            ? "text-blue-600"
-            : "text-gray-500 hover:text-gray-900"
+            ? "text-blue-600 dark:text-blue-500"
+            : "text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
         }`}
       >
         <LayoutGrid size={24} className="pointer-events-none" />
@@ -34,10 +34,10 @@ export default function BottomNav({ activeTab, onChange }: BottomNavProps) {
           console.log("Settings clicked");
           onChange("settings");
         }}
-        className={`flex flex-col items-center justify-center w-full h-full space-y-1 cursor-pointer ${
+        className={`flex flex-col items-center justify-center w-full h-full space-y-1 cursor-pointer transition-colors ${
           activeTab === "settings"
-            ? "text-blue-600"
-            : "text-gray-500 hover:text-gray-900"
+            ? "text-blue-600 dark:text-blue-500"
+            : "text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
         }`}
       >
         <Settings size={24} className="pointer-events-none" />

@@ -35,21 +35,23 @@ export default function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-white rounded-xl shadow-2xl max-w-sm w-full overflow-hidden">
+      <div className="bg-white dark:bg-zinc-800 rounded-xl shadow-2xl max-w-sm w-full overflow-hidden border border-gray-200 dark:border-zinc-700 transition-colors">
         <div className="p-6 text-center space-y-4">
           <div className="flex justify-center">{currentStep.icon}</div>
-          <h2 className="text-xl font-bold text-gray-900">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">
             {currentStep.title}
           </h2>
-          <p className="text-gray-600">{currentStep.description}</p>
+          <p className="text-gray-600 dark:text-gray-300">
+            {currentStep.description}
+          </p>
         </div>
 
-        <div className="p-4 bg-gray-50 border-t flex justify-between items-center">
+        <div className="p-4 bg-gray-50 dark:bg-zinc-900/50 border-t border-gray-200 dark:border-zinc-700 flex justify-between items-center transition-colors">
           <div className="flex gap-1">
             {steps.map((_, i) => (
               <div
                 key={i}
-                className={`w-2 h-2 rounded-full ${i + 1 === step ? "bg-blue-600" : "bg-gray-300"}`}
+                className={`w-2 h-2 rounded-full transition-colors ${i + 1 === step ? "bg-blue-600 dark:bg-blue-500" : "bg-gray-300 dark:bg-gray-600"}`}
               />
             ))}
           </div>
@@ -62,21 +64,12 @@ export default function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
                 onComplete();
               }
             }}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition"
+            className="bg-blue-600 dark:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors"
           >
             {step === steps.length ? "Get Started" : "Next"}
           </button>
         </div>
       </div>
-
-      {/* Highlighting cutout logic would go here if we were doing absolute element mapping, 
-          but a focused modal is cleaner for this complexity level unless requested specifically for 'cutouts'.
-          The user asked "darkens parts that arent of interest but show the areas that are".
-          
-          To do real 'cutouts', we'd need to know screen coordinates of DOM elements. 
-          Given this is a React popup text, a modal over the UI is the standard "Tutorial" pattern.
-          I will attempt to highlight the *Spaces Area* in general on Step 2.
-      */}
     </div>
   );
 }

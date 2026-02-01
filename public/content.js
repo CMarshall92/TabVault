@@ -70,6 +70,36 @@ document.head.appendChild(style);
 let activeTooltip = null;
 let removeBtn = null;
 
+// --- Message Listener ---
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.action === "scrollToItem") {
+        const { itemId } = request;
+        if (itemId) performScroll(itemId);
+    }
+});
+
+function performScroll(itemId) {
+    // Look for existing highlight
+    const el = document.querySelector(`.tabvault-highlight[data-tv-id="${itemId}"]`);
+    if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Flash effect
+        el.style.transition = 'box-shadow 0.3s';
+        el.style.boxShadow = '0 0 0 5px rgba(255, 255, 0, 0.7)';
+        setTimeout(() => {
+             el.style.boxShadow = 'none';
+        }, 1500);
+    } else {
+        // Not found yet? Maybe restore hasn't finished.
+        // We set a flag or try to wait?
+        // Let's retry in a bit
+        setTimeout(() => {
+             const elRetry = document.querySelector(`.tabvault-highlight[data-tv-id="${itemId}"]`);
+             if (elRetry) elRetry.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 1500);
+    }
+}
+
 // --- Colors ---
 const HIGHLIGHT_COLORS = [
     "#ffadad", "#ffd6a5", "#fdffb6", "#caffbf", 

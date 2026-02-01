@@ -9,9 +9,12 @@ import {
   ToggleRight,
   AlertCircle,
   CheckCircle2,
+  List,
+  FileText,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import TutorialOverlay from "./TutorialOverlay";
+import ReferencesView from "./ReferencesView";
 
 export default function SpacesList() {
   const {
@@ -24,6 +27,7 @@ export default function SpacesList() {
   } = useSpaces();
   const [newSpaceName, setNewSpaceName] = useState("");
   const [showTutorial, setShowTutorial] = useState(false);
+  const [viewingSpaceId, setViewingSpaceId] = useState<string | null>(null);
 
   useEffect(() => {
     const seen = localStorage.getItem("hasSeenTutorial");
@@ -48,20 +52,35 @@ export default function SpacesList() {
     }
   };
 
+  if (viewingSpaceId) {
+    return (
+      <ReferencesView
+        spaceId={viewingSpaceId}
+        onBack={() => setViewingSpaceId(null)}
+      />
+    );
+  }
+
   return (
-    <div className="p-4 space-y-4 relative">
+    <div className="p-4 space-y-4 relative min-h-screen bg-gray-50 dark:bg-zinc-900 transition-colors">
       {showTutorial && <TutorialOverlay onComplete={handleTutorialComplete} />}
 
-      <h1 className="text-xl font-bold mb-4">Research Spaces</h1>
+      <h1 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">
+        Research Spaces
+      </h1>
 
       {/* Active Space Indicator Banner */}
       <div
-        className={`p-3 rounded-lg flex items-center gap-3 border ${activeSpaceId ? "bg-blue-50 border-blue-200 text-blue-900" : "bg-amber-50 border-amber-200 text-amber-900"}`}
+        className={`p-3 rounded-lg flex items-center gap-3 border transition-colors ${
+          activeSpaceId
+            ? "bg-emerald-50 border-emerald-200 text-emerald-900 dark:bg-emerald-900/20 dark:border-emerald-800 dark:text-emerald-100"
+            : "bg-amber-50 border-amber-200 text-amber-900 dark:bg-amber-900/20 dark:border-amber-800 dark:text-amber-100"
+        }`}
       >
         {activeSpaceId ? (
-          <CheckCircle2 className="text-blue-600 shrink-0" />
+          <CheckCircle2 className="text-emerald-600 dark:text-emerald-400 shrink-0" />
         ) : (
-          <AlertCircle className="text-amber-600 shrink-0" />
+          <AlertCircle className="text-amber-600 dark:text-amber-500 shrink-0" />
         )}
         <div className="flex-1">
           <div className="font-semibold text-sm">
@@ -81,11 +100,11 @@ export default function SpacesList() {
           value={newSpaceName}
           onChange={(e) => setNewSpaceName(e.target.value)}
           placeholder="New Space Name"
-          className="flex-1 p-2 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-1 p-2 border border-gray-300 dark:border-zinc-700 rounded text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-zinc-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
         />
         <button
           type="submit"
-          className="p-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          className="p-2 bg-emerald-600 dark:bg-emerald-700 text-white rounded hover:bg-emerald-700 dark:hover:bg-emerald-600 transition-colors"
           disabled={!newSpaceName.trim()}
         >
           <Plus size={20} />
@@ -94,7 +113,7 @@ export default function SpacesList() {
 
       <div className="space-y-2">
         {spaces.length === 0 && (
-          <p className="text-gray-500 text-sm text-center py-4">
+          <p className="text-gray-500 dark:text-gray-400 text-sm text-center py-4">
             No spaces yet. Create one to start researching.
           </p>
         )}
@@ -104,21 +123,35 @@ export default function SpacesList() {
           return (
             <div
               key={space.id}
-              className={`p-3 rounded border transition-all ${isActive ? "border-blue-500 bg-blue-50 shadow-sm" : "border-gray-200 bg-white hover:border-gray-300"}`}
+              className={`p-3 rounded-lg border transition-all ${
+                isActive
+                  ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/10 shadow-sm"
+                  : "border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:border-gray-300 dark:hover:border-zinc-600"
+              }`}
             >
               <div
                 className="flex items-center justify-between cursor-pointer"
                 onClick={() => selectSpace(isActive ? null : space.id)}
               >
-                <div className="font-medium text-gray-900">{space.name}</div>
+                <div className="font-medium text-gray-900 dark:text-white">
+                  {space.name}
+                </div>
                 <div className="flex items-center gap-2">
                   <span
-                    className={`text-xs px-2 py-0.5 rounded-full ${isActive ? "bg-blue-200 text-blue-800" : "bg-gray-100 text-gray-500"}`}
+                    className={`text-xs px-2 py-0.5 rounded-full ${
+                      isActive
+                        ? "bg-emerald-200 text-emerald-800 dark:bg-emerald-800 dark:text-emerald-200"
+                        : "bg-gray-100 text-gray-500 dark:bg-zinc-700 dark:text-gray-400"
+                    }`}
                   >
                     {isActive ? "Active" : "Inactive"}
                   </span>
                   <button
-                    className={`focus:outline-none transition-colors ${isActive ? "text-blue-600" : "text-gray-300 hover:text-gray-400"}`}
+                    className={`focus:outline-none transition-colors ${
+                      isActive
+                        ? "text-emerald-600 dark:text-emerald-400"
+                        : "text-gray-300 dark:text-gray-600 hover:text-gray-400 dark:hover:text-gray-500"
+                    }`}
                     onClick={(e) => {
                       e.stopPropagation();
                       selectSpace(isActive ? null : space.id);
@@ -133,28 +166,41 @@ export default function SpacesList() {
                 </div>
               </div>
 
-              <div className="mt-2 text-xs text-gray-500 pl-0.5">
+              <div className="mt-2 text-xs text-gray-500 dark:text-gray-400 pl-0.5">
                 {space.items?.length || 0} saved items
               </div>
 
-              <div className="mt-3 flex gap-2 border-t pt-2 border-gray-100">
+              <div className="mt-3 flex items-center gap-2 pt-2 border-t border-gray-100 dark:border-zinc-700/50">
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     openSpace(space.id);
                   }}
-                  className="flex-1 flex items-center justify-center gap-1 py-1.5 text-xs bg-gray-100 hover:bg-gray-200 rounded text-gray-700"
+                  className="flex-1 flex items-center justify-center gap-1 py-1.5 text-xs bg-gray-100 hover:bg-gray-200 dark:bg-zinc-700 dark:hover:bg-zinc-600 rounded text-gray-700 dark:text-gray-200 transition-colors"
                 >
-                  <ExternalLink size={14} /> Open
+                  <ExternalLink size={14} /> Open Tabs
                 </button>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    deleteSpace(space.id);
+                    setViewingSpaceId(space.id);
                   }}
-                  className="p-1.5 text-red-500 hover:bg-red-50 rounded"
+                  className="flex-1 flex items-center justify-center gap-1 py-1.5 text-xs bg-gray-100 hover:bg-gray-200 dark:bg-zinc-700 dark:hover:bg-zinc-600 rounded text-gray-700 dark:text-gray-200 transition-colors"
                 >
-                  <Trash2 size={16} />
+                  <FileText size={14} /> References
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (confirm("Delete this space?")) deleteSpace(space.id);
+                  }}
+                  className="flex items-center justify-center p-1.5 w-8 h-8 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded text-xs transition-colors group"
+                  title="Delete Space"
+                >
+                  <Trash2
+                    size={16}
+                    className="group-hover:stroke-2 transition-all"
+                  />
                 </button>
               </div>
             </div>

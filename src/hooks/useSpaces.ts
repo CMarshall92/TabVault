@@ -91,8 +91,24 @@ export function useSpaces() {
     const space = spaces.find((s) => s.id === spaceId);
     if (space && space.items.length > 0) {
         if (typeof chrome !== "undefined" && chrome.runtime) {
-            const urls = Array.from(new Set(space.items.map(i => i.url)));
-            chrome.runtime.sendMessage({ action: "openSpace", urls, spaceName: space.name });
+            // Group by URL to find the first item for each page
+            const urlToItemMap = new Map<string, string>();
+            // We assume items are pushed in chronological order? 
+            // If we want the "first" visually, sorting by timestamp might be good, 
+            // but the array order is likely preserving insertion order.
+            
+            space.items.forEach(item => {
+                if (!urlToItemMap.has(item.url)) {
+                    urlToItemMap.set(item.url, item.id);
+                }
+            });
+
+            const tabsToOpen = Array.from(urlToItemMap.entries()).map(([url, itemId]) => ({
+                url,
+                itemId
+            }));
+            
+            chrome.runtime.sendMessage({ action: "openSpace", tabs: tabsToOpen, spaceName: space.name });
         } else {
             alert(`Open Space: ${space.name} (This would open tabs in extension)`);
         }
@@ -115,6 +131,44 @@ export function useSpaces() {
       }
   }, [spaces, activeSpaceId]);
 
+  const updateItemColor = useCallback(async (spaceId: string, itemId: string, color: string) => {
+    const updatedSpaces = spaces.map(s => {
+      if (s.id === spaceId) {
+        return {
+          ...s,
+          items: s.items.map(i => i.id === itemId ? { ...i, color } : i)
+        };
+      }
+      return s;
+    });
+    setSpaces(updatedSpaces);
+    
+    if (typeof chrome !== "undefined" && chrome.storage) {
+      await chrome.storage.local.set({ spaces: updatedSpaces });
+    } else {
+       localStorage.setItem("spaces", JSON.stringify(updatedSpaces));
+    }
+  }, [spaces]);
+
+  const deleteItem = useCallback(async (spaceId: string, itemId: string) => {
+    const updatedSpaces = spaces.map(s => {
+      if (s.id === spaceId) {
+        return {
+          ...s,
+          items: s.items.filter(i => i.id !== itemId)
+        };
+      }
+      return s;
+    });
+    setSpaces(updatedSpaces);
+    
+    if (typeof chrome !== "undefined" && chrome.storage) {
+      await chrome.storage.local.set({ spaces: updatedSpaces });
+    } else {
+       localStorage.setItem("spaces", JSON.stringify(updatedSpaces));
+    }
+  }, [spaces]);
+
   return {
     spaces,
     activeSpaceId,
@@ -122,6 +176,8 @@ export function useSpaces() {
     addSpace,
     selectSpace,
     openSpace,
-    deleteSpace
+    deleteSpace,
+    updateItemColor,
+    deleteItem
   };
 }
