@@ -1,0 +1,32 @@
+{
+  "name": "@basecommit/tabvault",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build && node scripts/build-extension.js",
+    "build:unix": "next build && mv out/_next out/next && find out -type f -name '*.html' -exec sed -i '' 's/\\/_next/\\/next/g' {} + && rm -rf out/_not-found* out/__next*",
+    "watch": "chokidar \"src/**/*\" -c \"npm run build\"",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@types/chrome": "^0.1.36",
+    "lucide-react": "^0.563.0",
+    "next": "16.1.6",
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "babel-plugin-react-compiler": "1.0.0",
+    "chokidar-cli": "^3.0.0",
+    "eslint": "^9",
+    "eslint-config-next": "16.1.6",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
