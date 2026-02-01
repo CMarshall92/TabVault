@@ -1,37 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Tab Vault
+
+Tab Vault is a Chrome Extension designed to help you organize your research sessions into "Spaces". It allows you to save tab groups, highlight text on pages, and manage your browsing context efficiently.
+
+Built with **Next.js**, **React**, **Tailwind CSS**, and **TypeScript**.
+
+## Prerequisites
+
+- Node.js (v18 or higher recommended)
+- npm or yarn
 
 ## Getting Started
 
-First, run the development server:
+1.  **Install Dependencies**
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+    ```bash
+    npm install
+    ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2.  **Building the Extension**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+    To create a production-ready build for the extension:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+    ```bash
+    npm run build
+    ```
 
-## Learn More
+    This command compiles the Next.js application, exports it to static HTML, and runs a post-build script (`scripts/build-extension.js`) to:
+    - Rename Next.js internal folders (e.g., `_next` -> `next`) to be compatible with Chrome's restrictions.
+    - Extract inline scripts into external files to comply with Manifest V3 Content Security Policy (CSP).
+    - Clean up forbidden files.
 
-To learn more about Next.js, take a look at the following resources:
+    The final extension will be located in the `out/` directory.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3.  **Development Mode (Watch)**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+    For a smoother development workflow, you can watch for file changes:
 
-## Deploy on Vercel
+    ```bash
+    npm run watch
+    ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+    This will use `chokidar` to watch for changes in the `src/` directory and automatically rebuild the extension. _Note: You often still need to click the "Reload" icon on the extension in Chrome's `chrome://extensions` page for changes to take effect._
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# TabVault
+## Loading into Chrome
+
+1.  Open Chrome and navigate to `chrome://extensions`.
+2.  Enable **Developer mode** by toggling the switch in the top-right corner.
+3.  Click the **Load unpacked** button.
+4.  Select the `out` directory inside your project folder (`.../TabVault/out`).
+5.  The extension should now appear in your list and be usable!
+
+## Project Structure
+
+- `src/`: React source code (Next.js App Router).
+- `public/`: Extension-specific files (Manifest, background scripts, content scripts).
+- `scripts/`: Custom build scripts to adapt Next.js export for Chrome Extensions.
+- `out/`: The final build output directory (load this into Chrome).
+
+## Troubleshooting
+
+- **"File not found" or `_next` errors**: Ensure you are running `npm run build` which includes the fix script, not just `next build`.
+- **CSP / Inline Script Errors**: The build script extracts inline scripts. If you see these, try rebuilding. Ensure you are not adding new inline `<script>` tags manually in your components without going through the build process.
