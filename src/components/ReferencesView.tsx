@@ -192,8 +192,7 @@ export default function ReferencesView({
                       </div>
                       <button
                         onClick={() => {
-                          if (confirm("Remove this reference?"))
-                            deleteItem(space.id, item.id);
+                          deleteItem(space.id, item.id);
                         }}
                         className="text-gray-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 p-1.5 rounded-md transition-colors"
                         title="Remove reference"

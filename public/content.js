@@ -69,6 +69,7 @@ document.head.appendChild(style);
 
 let activeTooltip = null;
 let removeBtn = null;
+let removeBtnTimer = null;
 
 // --- Message Listener ---
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -126,10 +127,11 @@ document.addEventListener('mouseup', async (e) => {
         activeTooltip = null;
     }
     
-    // cleanup remove btn
+    // cleanup remove btn if clicking elsewhere (handled by timers usually, but force close on click)
+    // Actually, letting timer handle it is smoother.
+    // But if we click text, we might want to select, so removing button is good practice.
     if (removeBtn && !e.target.closest('.tabvault-highlight') && !removeBtn.contains(e.target)) {
-        removeBtn.remove();
-        removeBtn = null;
+        hideRemoveButton();
     }
 
     if (e.target.matches('input, textarea') || e.target.isContentEditable) return;
@@ -197,13 +199,17 @@ function showTooltip(rect, text, spaceId, range) {
 
 function highlightSafe(range, color, itemId) {
     // Recursive walker that finds text nodes intersecting the range
-    // and wraps them.
     const startContainer = range.startContainer;
     const endContainer = range.endContainer;
     const startOffset = range.startOffset;
     const endOffset = range.endOffset;
     
-    const commonAncestor = range.commonAncestorContainer;
+    // Fallback if commonAncestor is not an Element (e.g. TextNode)
+    let commonAncestor = range.commonAncestorContainer;
+    if (commonAncestor.nodeType === Node.TEXT_NODE) {
+        commonAncestor = commonAncestor.parentNode;
+    }
+
     const textNodes = [];
     
     const walker = document.createTreeWalker(
@@ -211,6 +217,25 @@ function highlightSafe(range, color, itemId) {
         NodeFilter.SHOW_TEXT, 
         {
             acceptNode: (node) => {
+                // Safety checks for "all types of html"
+                const parent = node.parentNode;
+                if (!parent) return NodeFilter.FILTER_REJECT;
+                
+                // 1. Skip invalid tags
+                const tag = parent.tagName;
+                if (['SCRIPT', 'STYLE', 'TEXTAREA', 'INPUT', 'NOSCRIPT', 'svg', 'IFRAME', 'BUTTON', 'SELECT', 'OPTION'].includes(tag)) {
+                    return NodeFilter.FILTER_REJECT;
+                }
+                
+                // 2. Prevent nested highlights (if parent is already highlighted)
+                if (parent.classList && parent.classList.contains('tabvault-highlight')) {
+                    return NodeFilter.FILTER_REJECT;
+                }
+
+                // 3. Skip empty whitespace nodes to reduce visual clutter? 
+                // No, sometimes we need them for spacing. But generally good for clean DOM.
+                if (!node.nodeValue.trim()) return NodeFilter.FILTER_SKIP;
+
                 if (!range.intersectsNode(node)) return NodeFilter.FILTER_REJECT;
                 return NodeFilter.FILTER_ACCEPT;
             }
@@ -226,6 +251,7 @@ function highlightSafe(range, color, itemId) {
         let start = 0;
         let end = node.length;
         
+        // Adjust start/end if this node is the boundary
         if (node === startContainer) start = startOffset;
         if (node === endContainer) end = endOffset;
         
@@ -246,16 +272,9 @@ function wrapTextNodePart(textNode, start, end, color, itemId) {
     wrapper.dataset.tvId = itemId;
     
     // Interactions
-    wrapper.addEventListener('mouseenter', () => showRemoveButton(wrapper));
-    wrapper.addEventListener('mouseleave', (e) => {
-        // Delay hide to allow moving to button
-        setTimeout(() => {
-            if (removeBtn && !removeBtn.matches(':hover')) {
-                removeBtn.remove();
-                removeBtn = null;
-            }
-        }, 100);
-    });
+    // Use named handlers to easier debug and maintain logic consistency
+    wrapper.addEventListener('mouseenter', handleHighlightMouseEnter);
+    wrapper.addEventListener('mouseleave', handleHighlightMouseLeave);
 
     try {
         range.surroundContents(wrapper);
@@ -264,25 +283,99 @@ function wrapTextNodePart(textNode, start, end, color, itemId) {
     }
 }
 
-function showRemoveButton(span) {
-    if (removeBtn) removeBtn.remove();
+// --- Hover Logic for Stable Buttons ---
+
+function handleHighlightMouseEnter(e) {
+    const span = e.target;
+    // Walk up just in case, though target should be span
+    const target = span.closest('.tabvault-highlight');
+    if (!target) return;
     
-    // We use fixed positioning based on bounding client rect to handle all scrolls
-    const rect = span.getBoundingClientRect();
+    const itemId = target.dataset.tvId;
+    
+    // 1. Cancel any pending hide
+    if (removeBtnTimer) {
+        clearTimeout(removeBtnTimer);
+        removeBtnTimer = null;
+    }
+    
+    // 2. If button exists and matches this item, we are good.
+    if (removeBtn && removeBtn.dataset.tvId === itemId) {
+        return;
+    }
+    
+    // 3. Else, show button for this group
+    showRemoveButtonForId(itemId);
+}
+
+function handleHighlightMouseLeave(e) {
+    // Schedule hide. 
+    // If we enter another span of SAME ID, mouseenter will fire and clear this.
+    // If we enter the BUTTON, the button's mouseenter will fire and clear this.
+    removeBtnTimer = setTimeout(() => {
+        hideRemoveButton();
+    }, 200); // 200ms grace period
+}
+
+function hideRemoveButton() {
+    if (removeBtn) {
+        removeBtn.remove();
+        removeBtn = null;
+    }
+}
+
+function showRemoveButtonForId(itemId) {
+    // Close old one
+    hideRemoveButton();
+    
+    // Calculate bounding box of all spans for this item
+    const spans = Array.from(document.querySelectorAll(`.tabvault-highlight[data-tv-id="${itemId}"]`));
+    if (spans.length === 0) return;
+    
+    let minTop = Infinity, minLeft = Infinity, maxRight = -Infinity;
+    
+    // We only care about top-most and horizontal center
+    spans.forEach(s => {
+        const r = s.getBoundingClientRect();
+        if (r.top < minTop) minTop = r.top;
+        if (r.left < minLeft) minLeft = r.left;
+        if (r.right > maxRight) maxRight = r.right;
+    });
+    
+    const width = maxRight - minLeft;
+    // top-center of the bounding box
+    const top = minTop;
+    const left = minLeft + width / 2;
 
     const btn = document.createElement("div");
     btn.className = "tabvault-remove-btn";
+    btn.dataset.tvId = itemId;
     btn.innerHTML = "&times;";
-    btn.title = "Remove";
+    btn.title = "Remove Highlight";
     
-    // Center top of the span
-    btn.style.top = `${rect.top}px`; 
-    btn.style.left = `${rect.left + (rect.width/2)}px`;
+    btn.style.top = `${top}px`;
+    btn.style.left = `${left}px`;
     btn.style.opacity = "1";
+    
+    // Button Interactions
+    btn.addEventListener("mouseenter", () => {
+         if (removeBtnTimer) {
+             clearTimeout(removeBtnTimer);
+             removeBtnTimer = null;
+         }
+    });
+
+    btn.addEventListener("mouseleave", () => {
+        removeBtnTimer = setTimeout(() => {
+             hideRemoveButton();
+        }, 200);
+    });
     
     btn.addEventListener("click", async (e) => {
         e.stopPropagation();
-        const itemId = span.dataset.tvId;
+        e.preventDefault();
+        
+        const itemId = btn.dataset.tvId;
         if (!itemId) return;
         
         await removeItem(itemId);
@@ -290,17 +383,14 @@ function showRemoveButton(span) {
         // Remove ALL spans with this ID
         const allSpans = document.querySelectorAll(`.tabvault-highlight[data-tv-id="${itemId}"]`);
         allSpans.forEach(s => {
+            // Unwrap
             const parent = s.parentNode;
             while(s.firstChild) parent.insertBefore(s.firstChild, s);
             parent.removeChild(s);
         });
         
-        btn.remove();
-        removeBtn = null;
+        hideRemoveButton();
     });
-
-    // Keep button alive if hovered
-    btn.addEventListener('mouseenter', () => {});
     
     document.body.appendChild(btn);
     removeBtn = btn;
