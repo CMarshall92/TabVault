@@ -78,9 +78,9 @@ export default function ReferencesView({
   if (!space) return <div>Space not found</div>;
 
   return (
-    <div className="flex flex-col h-[calc(100vh-64px)] overflow-hidden bg-gray-50 dark:bg-zinc-900 transition-colors">
+    <div className="flex flex-col h-full overflow-hidden bg-gray-50 dark:bg-zinc-900 transition-colors">
       {/* Header */}
-      <div className="flex items-center gap-3 p-4 bg-white dark:bg-zinc-800 border-b border-gray-200 dark:border-zinc-700 shadow-sm z-20 sticky top-0 transition-colors">
+      <div className="flex items-center gap-3 p-4 bg-white dark:bg-zinc-800 border-b border-gray-200 dark:border-zinc-700 shadow-sm z-20 shrink-0 transition-colors">
         <button
           onClick={onBack}
           className="p-2 -ml-2 hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-full transition-colors text-gray-700 dark:text-gray-200"
@@ -99,7 +99,7 @@ export default function ReferencesView({
       </div>
 
       {/* List */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-6">
+      <div className="flex-1 overflow-y-auto p-4 pb-24 space-y-6">
         {space.items.length === 0 && (
           <div className="text-center text-gray-400 dark:text-gray-500 py-10">
             <div className="flex justify-center mb-2">

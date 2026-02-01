@@ -62,56 +62,60 @@ export default function SpacesList() {
   }
 
   return (
-    <div className="p-4 space-y-4 relative min-h-screen bg-gray-50 dark:bg-zinc-900 transition-colors">
+    <div className="flex flex-col h-full bg-gray-50 dark:bg-zinc-900 transition-colors relative overflow-hidden">
       {showTutorial && <TutorialOverlay onComplete={handleTutorialComplete} />}
 
-      <h1 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">
-        Research Spaces
-      </h1>
+      {/* Fixed Header Section */}
+      <div className="p-4 pb-2 space-y-4 shrink-0 z-10 bg-gray-50 dark:bg-zinc-900 shadow-sm border-b border-gray-200 dark:border-zinc-800">
+        <h1 className="text-xl font-bold text-gray-900 dark:text-white">
+          Spaces
+        </h1>
 
-      {/* Active Space Indicator Banner */}
-      <div
-        className={`p-3 rounded-lg flex items-center gap-3 border transition-colors ${
-          activeSpaceId
-            ? "bg-emerald-50 border-emerald-200 text-emerald-900 dark:bg-emerald-900/20 dark:border-emerald-800 dark:text-emerald-100"
-            : "bg-amber-50 border-amber-200 text-amber-900 dark:bg-amber-900/20 dark:border-amber-800 dark:text-amber-100"
-        }`}
-      >
-        {activeSpaceId ? (
-          <CheckCircle2 className="text-emerald-600 dark:text-emerald-400 shrink-0" />
-        ) : (
-          <AlertCircle className="text-amber-600 dark:text-amber-500 shrink-0" />
-        )}
-        <div className="flex-1">
-          <div className="font-semibold text-sm">
-            {activeSpaceId ? "Space Active" : "No Space Active"}
-          </div>
-          <div className="text-xs opacity-90">
-            {activeSpaceId
-              ? `Saving items to "${activeSpaceName}"`
-              : "Activate a space below to start saving references."}
+        {/* Active Space Indicator Banner */}
+        <div
+          className={`p-3 rounded-lg flex items-center gap-3 border transition-colors ${
+            activeSpaceId
+              ? "bg-emerald-50 border-emerald-200 text-emerald-900 dark:bg-emerald-900/20 dark:border-emerald-800 dark:text-emerald-100"
+              : "bg-amber-50 border-amber-200 text-amber-900 dark:bg-amber-900/20 dark:border-amber-800 dark:text-amber-100"
+          }`}
+        >
+          {activeSpaceId ? (
+            <CheckCircle2 className="text-emerald-600 dark:text-emerald-400 shrink-0" />
+          ) : (
+            <AlertCircle className="text-amber-600 dark:text-amber-500 shrink-0" />
+          )}
+          <div className="flex-1">
+            <div className="font-semibold text-sm">
+              {activeSpaceId ? "Space Active" : "No Space Active"}
+            </div>
+            <div className="text-xs opacity-90">
+              {activeSpaceId
+                ? `Saving items to "${activeSpaceName}"`
+                : "Activate a space below to start saving references."}
+            </div>
           </div>
         </div>
+
+        <form onSubmit={handleCreate} className="flex gap-2">
+          <input
+            type="text"
+            value={newSpaceName}
+            onChange={(e) => setNewSpaceName(e.target.value)}
+            placeholder="New Space Name"
+            className="flex-1 p-2 border border-gray-300 dark:border-zinc-700 rounded text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-zinc-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+          />
+          <button
+            type="submit"
+            className="p-2 bg-emerald-600 dark:bg-emerald-700 text-white rounded hover:bg-emerald-700 dark:hover:bg-emerald-600 transition-colors"
+            disabled={!newSpaceName.trim()}
+          >
+            <Plus size={20} />
+          </button>
+        </form>
       </div>
 
-      <form onSubmit={handleCreate} className="flex gap-2">
-        <input
-          type="text"
-          value={newSpaceName}
-          onChange={(e) => setNewSpaceName(e.target.value)}
-          placeholder="New Space Name"
-          className="flex-1 p-2 border border-gray-300 dark:border-zinc-700 rounded text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-zinc-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
-        />
-        <button
-          type="submit"
-          className="p-2 bg-emerald-600 dark:bg-emerald-700 text-white rounded hover:bg-emerald-700 dark:hover:bg-emerald-600 transition-colors"
-          disabled={!newSpaceName.trim()}
-        >
-          <Plus size={20} />
-        </button>
-      </form>
-
-      <div className="space-y-2">
+      {/* Scrollable List Section */}
+      <div className="flex-1 overflow-y-auto p-4 pb-24 space-y-2 bg-gray-50 dark:bg-zinc-900">
         {spaces.length === 0 && (
           <p className="text-gray-500 dark:text-gray-400 text-sm text-center py-4">
             No spaces yet. Create one to start researching.
@@ -170,25 +174,27 @@ export default function SpacesList() {
                 {space.items?.length || 0} saved items
               </div>
 
-              <div className="mt-3 flex items-center gap-2 pt-2 border-t border-gray-100 dark:border-zinc-700/50">
+              <div className="mt-3 flex items-center gap-2 pt-2">
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     openSpace(space.id);
                   }}
-                  className="flex-1 flex items-center justify-center gap-1 py-1.5 text-xs bg-gray-100 hover:bg-gray-200 dark:bg-zinc-700 dark:hover:bg-zinc-600 rounded text-gray-700 dark:text-gray-200 transition-colors"
+                  className="w-full py-2 bg-gray-900 hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-200 text-white dark:text-gray-900 text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <ExternalLink size={14} /> Open Tabs
                 </button>
+
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     setViewingSpaceId(space.id);
                   }}
-                  className="flex-1 flex items-center justify-center gap-1 py-1.5 text-xs bg-gray-100 hover:bg-gray-200 dark:bg-zinc-700 dark:hover:bg-zinc-600 rounded text-gray-700 dark:text-gray-200 transition-colors"
+                  className="w-full py-2 bg-gray-900 hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-200 text-white dark:text-gray-900 text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <FileText size={14} /> References
                 </button>
+
                 <button
                   onClick={(e) => {
                     e.stopPropagation();

@@ -14,8 +14,8 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col h-full">
-      <main className="flex-1 overflow-y-auto pb-16">
+    <div className="flex flex-col h-full bg-gray-50 dark:bg-zinc-900">
+      <main className="flex-1 overflow-hidden relative">
         {activeTab === "spaces" ? <SpacesList /> : <SettingsView />}
       </main>
       <BottomNav activeTab={activeTab} onChange={handleTabChange} />
