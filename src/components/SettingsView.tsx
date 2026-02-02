@@ -254,10 +254,21 @@ export default function SettingsView() {
           <p>
             <strong>TabVault v1.0.0</strong>
           </p>
-          <p className="mt-1 text-xs">
+          <p className="my-2 text-xs">
             Thank you for using TabVault! Your support helps keep this project
             alive.
           </p>
+          <span>
+            Visit us over at{" "}
+            <a
+              href="https://www.basecommit.co.uk"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:underline text-xs mt-2 inline-block"
+            >
+              BaseCommit.co.uk
+            </a>
+          </span>
         </div>
       </div>
     </div>

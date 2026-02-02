@@ -6,7 +6,7 @@ import ThemeInitializer from "@/components/ThemeInitializer";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "ResearchSpace",
+  title: "TabVault",
   description: "Organize your research",
 };
 
