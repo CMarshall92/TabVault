@@ -65,11 +65,16 @@ export function useSpaces() {
     
     // Optimistic update
     setSpaces(updatedSpaces);
+    setActiveSpaceId(newSpace.id);
     
     if (typeof chrome !== "undefined" && chrome.storage) {
-      await chrome.storage.local.set({ spaces: updatedSpaces });
+      await chrome.storage.local.set({ 
+        spaces: updatedSpaces,
+        activeSpaceId: newSpace.id 
+      });
     } else {
        localStorage.setItem("spaces", JSON.stringify(updatedSpaces));
+       localStorage.setItem("activeSpaceId", newSpace.id);
     }
   }, [spaces]);
 

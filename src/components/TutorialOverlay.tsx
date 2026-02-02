@@ -34,7 +34,7 @@ export default function TutorialOverlay({ onComplete }: TutorialOverlayProps) {
   const currentStep = steps[step - 1];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="bg-white dark:bg-zinc-800 rounded-xl shadow-2xl max-w-sm w-full overflow-hidden border border-gray-200 dark:border-zinc-700 transition-colors">
         <div className="p-6 text-center space-y-4">
           <div className="flex justify-center">{currentStep.icon}</div>

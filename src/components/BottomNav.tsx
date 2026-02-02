@@ -9,7 +9,7 @@ type BottomNavProps = {
 
 export default function BottomNav({ activeTab, onChange }: BottomNavProps) {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 border-t border-gray-200 bg-white dark:bg-zinc-900 dark:border-zinc-800 p-2 flex justify-around items-center h-16 safe-area-bottom z-50 transition-colors">
+    <nav className="w-full border-t border-gray-200 bg-white dark:bg-zinc-900 dark:border-zinc-800 p-2 flex justify-around items-center h-16 safe-area-bottom z-50 transition-colors">
       <button
         type="button"
         onClick={(e) => {

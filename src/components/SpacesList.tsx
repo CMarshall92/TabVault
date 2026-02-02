@@ -9,7 +9,6 @@ import {
   ToggleRight,
   AlertCircle,
   CheckCircle2,
-  List,
   FileText,
 } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -115,7 +114,7 @@ export default function SpacesList() {
       </div>
 
       {/* Scrollable List Section */}
-      <div className="flex-1 overflow-y-auto p-4 pb-24 space-y-2 bg-gray-50 dark:bg-zinc-900">
+      <div className="flex-1 overflow-y-auto p-4 pb-4 space-y-2 bg-gray-50 dark:bg-zinc-900">
         {spaces.length === 0 && (
           <p className="text-gray-500 dark:text-gray-400 text-sm text-center py-4">
             No spaces yet. Create one to start researching.
@@ -198,7 +197,7 @@ export default function SpacesList() {
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    if (confirm("Delete this space?")) deleteSpace(space.id);
+                    deleteSpace(space.id);
                   }}
                   className="flex items-center justify-center p-1.5 w-8 h-8 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded text-xs transition-colors group"
                   title="Delete Space"

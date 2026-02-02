@@ -28,12 +28,14 @@ export default function SettingsView() {
   };
 
   return (
-    <div className="h-full overflow-y-auto p-4 pb-24 bg-gray-50 dark:bg-zinc-900 transition-colors">
-      <h1 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">
-        Settings
-      </h1>
+    <div className="flex flex-col h-full bg-gray-50 dark:bg-zinc-900 transition-colors">
+      <div className="p-4 pb-2 shrink-0">
+        <h1 className="text-xl font-bold text-gray-900 dark:text-white">
+          Settings
+        </h1>
+      </div>
 
-      <div className="space-y-4">
+      <div className="flex-1 overflow-y-auto p-4 pt-2 space-y-4">
         {/* Supporter Banner */}
         <div className="p-4 rounded-xl border bg-white dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 shadow-sm transition-all">
           <div className="flex flex-col gap-4">
@@ -140,6 +142,64 @@ export default function SettingsView() {
 
         <div className="p-4 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg shadow-sm transition-colors">
           <h2 className="text-xs font-bold text-gray-500 dark:text-gray-400 mb-4 uppercase tracking-wider">
+            Appearance
+          </h2>
+
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <div className="text-sm font-medium text-gray-900 dark:text-white">
+                  Dark Mode
+                </div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">
+                  Reduce eye strain
+                </div>
+              </div>
+              <button
+                onClick={toggleTheme}
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                  theme === "dark" ? "bg-blue-600" : "bg-gray-200"
+                }`}
+                role="switch"
+                aria-checked={theme === "dark"}
+              >
+                <span
+                  aria-hidden="true"
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                    theme === "dark" ? "translate-x-5" : "translate-x-0"
+                  } flex items-center justify-center`}
+                >
+                  {theme === "dark" ? (
+                    <Moon size={12} className="text-blue-600" />
+                  ) : (
+                    <Sun size={12} className="text-yellow-500" />
+                  )}
+                </span>
+              </button>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <div className="text-sm font-medium text-gray-900 dark:text-white">
+                  Reset Tutorial
+                </div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">
+                  Show the welcome guide
+                </div>
+              </div>
+              <button
+                onClick={handleResetTutorial}
+                className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50 rounded-md transition-colors"
+              >
+                <RotateCcw size={16} />
+                Reset
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-4 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg shadow-sm transition-colors">
+          <h2 className="text-xs font-bold text-gray-500 dark:text-gray-400 mb-4 uppercase tracking-wider">
             Feedback & Support
           </h2>
           <div className="space-y-3">
@@ -184,68 +244,6 @@ export default function SettingsView() {
             >
               <Mail size={14} />
               Draft Email
-            </button>
-          </div>
-        </div>
-
-        <div className="p-4 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg shadow-sm transition-colors">
-          <h2 className="text-xs font-bold text-gray-500 dark:text-gray-400 mb-4 uppercase tracking-wider">
-            Appearance
-          </h2>
-
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <div className="text-sm font-medium text-gray-900 dark:text-white">
-                Dark Mode
-              </div>
-              <div className="text-xs text-gray-500 dark:text-gray-400">
-                Reduce eye strain
-              </div>
-            </div>
-            <button
-              onClick={toggleTheme}
-              className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                theme === "dark" ? "bg-blue-600" : "bg-gray-200"
-              }`}
-              role="switch"
-              aria-checked={theme === "dark"}
-            >
-              <span
-                aria-hidden="true"
-                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                  theme === "dark" ? "translate-x-5" : "translate-x-0"
-                } flex items-center justify-center`}
-              >
-                {theme === "dark" ? (
-                  <Moon size={12} className="text-blue-600" />
-                ) : (
-                  <Sun size={12} className="text-yellow-500" />
-                )}
-              </span>
-            </button>
-          </div>
-        </div>
-
-        <div className="p-4 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg shadow-sm transition-colors">
-          <h2 className="text-xs font-bold text-gray-500 dark:text-gray-400 mb-4 uppercase tracking-wider">
-            Preferences
-          </h2>
-
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <div className="text-sm font-medium text-gray-900 dark:text-white">
-                Reset Tutorial
-              </div>
-              <div className="text-xs text-gray-500 dark:text-gray-400">
-                Show the welcome guide
-              </div>
-            </div>
-            <button
-              onClick={handleResetTutorial}
-              className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50 rounded-md transition-colors"
-            >
-              <RotateCcw size={16} />
-              Reset
             </button>
           </div>
         </div>

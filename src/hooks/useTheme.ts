@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 export function useTheme() {
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [theme, setTheme] = useState<"light" | "dark">("dark");
 
   useEffect(() => {
     // Determine initial theme
@@ -11,10 +11,9 @@ export function useTheme() {
       setTheme(stored);
       applyTheme(stored);
     } else {
-      // 2. Default to light as per user request (even if system is dark preferred)
-      // or check system preference? User asked for "toggle", so explicit is better.
-      setTheme("light");
-      applyTheme("light");
+      // 2. Default to dark as per user request
+      setTheme("dark");
+      applyTheme("dark");
     }
   }, []);
 
