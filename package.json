@@ -1,6 +1,6 @@
 {
   "name": "@basecommit/tabvault",
-  "version": "0.1.0",
+  "version": "1.0.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -8,7 +8,9 @@
     "build:unix": "next build && mv out/_next out/next && find out -type f -name '*.html' -exec sed -i '' 's/\\/_next/\\/next/g' {} + && rm -rf out/_not-found* out/__next*",
     "watch": "chokidar \"src/**/*\" -c \"npm run build\"",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "bundle": "npm run build && powershell -Command \"Compress-Archive -Path out/* -DestinationPath bundled.zip -Force\"",
+    "bundle:mac": "cd out && zip -r ../bundled.zip . -x '*.DS_Store'"
   },
   "dependencies": {
     "@types/chrome": "^0.1.36",

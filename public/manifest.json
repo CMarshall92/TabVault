@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "TabVault",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Organize research into Spaces, highlight text, and manage tab groups.",
   "icons": {
     "16": "icon_16.png",
@@ -14,7 +14,6 @@
   "permissions": [
     "storage",
     "activeTab",
-    "scripting",
     "tabGroups",
     "contextMenus"
   ],

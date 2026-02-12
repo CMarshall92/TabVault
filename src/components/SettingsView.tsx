@@ -98,8 +98,8 @@ export default function SettingsView() {
                 <button
                   onClick={() => {
                     const customLink = isMonthly
-                      ? "https://buy.stripe.com/test_dRm8wPaTO817eiBg2w87K07" // Monthly custom
-                      : "https://donate.stripe.com/test_14A9AT1je6X33DX9E887K03"; // One-time custom
+                      ? "https://buy.stripe.com/9B6aEY6pmbGx3sF7WtbjW00" // Monthly custom
+                      : "https://donate.stripe.com/28EbJ28xu3a1e7jfoVbjW04"; // One-time custom
                     window.open(customLink, "_blank");
                   }}
                   className="w-full py-2.5 rounded-lg text-sm font-bold bg-amber-400 hover:bg-amber-500 text-amber-950 shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-2"
@@ -114,14 +114,14 @@ export default function SettingsView() {
                   onClick={() => {
                     const links = {
                       oneTime: {
-                        10: "https://buy.stripe.com/test_28E8wP6DybdjcatcQk87K02",
-                        25: "https://buy.stripe.com/test_6oU6oH1je0yF8Yh3fK87K01",
-                        50: "https://buy.stripe.com/test_bJe7sL7HCbdj1vPaIc87K00",
+                        10: "https://buy.stripe.com/7sY8wQfZWcKB2oB4KhbjW05",
+                        25: "https://buy.stripe.com/14A00k9By8ule7jb8FbjW06",
+                        50: "https://buy.stripe.com/bJefZi3da25X5ANgsZbjW07",
                       },
                       monthly: {
-                        10: "https://buy.stripe.com/test_dRmaEX9PK4OVeiBeYs87K04",
-                        25: "https://buy.stripe.com/test_fZudR97HC5SZeiBdUo87K05",
-                        50: "https://buy.stripe.com/test_bJe4gz8LGchna2laIc87K06",
+                        10: "https://buy.stripe.com/00w5kE6pmbGx5ANccJbjW03",
+                        25: "https://buy.stripe.com/fZu7sM6pmdOF3sFdgNbjW02",
+                        50: "https://buy.stripe.com/28EdRa8xuh0R2oB4KhbjW01",
                       },
                     };
                     const type = isMonthly ? "monthly" : "oneTime";
